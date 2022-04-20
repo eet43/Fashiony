@@ -44,7 +44,7 @@ def board_entire_show():
 
     return response
 
-
+# 게시물 상세 정보를 내려 주는 API
 def board_detail_show(uid):
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')
