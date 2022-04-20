@@ -23,13 +23,14 @@ def board_entire_show():
         page_size = 10
 
     if request.args.get('search') is not None:
-        search = request.args.get('search')
-        like_search = re.compile(f'.*${search}.*', re.IGNORECASE)
+        search = ".*" + request.args.get('search') + ".*"
+        like_search = re.compile(search, re.IGNORECASE)
         boards = list(
-            db.brandSnaps.find({"$or": [{'modelName': like_search}, {'brandName': like_search}]}, {'id_': False}).skip(
+            db.brandSnaps.find({"$or": [{'board.modelName': like_search}, {'board.brandName': like_search}]},
+                               {'_id': False}).skip(
                 (page - 1) * page_size).limit(page_size))
     else:
-        boards = list(db.brandSnaps.find({}, {'id_': False}).skip((page - 1) * page_size).limit(page_size))
+        boards = list(db.brandSnaps.find({}, {'_id': False}).skip((page - 1) * page_size).limit(page_size))
 
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')
