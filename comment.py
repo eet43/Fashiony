@@ -13,6 +13,7 @@ client = MongoClient('localhost', 27017)
 db = client.fashionydb
 
 
+# 댓글 등록 API
 def comment_enroll(uid):
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')

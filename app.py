@@ -73,6 +73,13 @@ def board_entire_show():
     return jsonify(response)
 
 
+# 게시물에 대한 상세 정보를 내려주는 API
+@app.route('/api/board/<uuid:uid>', methods=['GET'])
+def board_detail_show(uid):
+    response = board.board_detail_show(uid)
+    return jsonify(response)
+
+
 # 댓글 등록 API
 @app.route('/api/board/<uuid:uid>/comment', methods=['POST'])
 def comment_enroll(uid):
