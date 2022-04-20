@@ -45,7 +45,15 @@ def comment_enroll(uid):
         'updatedAt': time
     }
 
-    comments = list(db.brandSnaps.find_one({'board.uuid': str(uid)}, {'_id': False})['comments'])
+    board = db.brandSnaps.find_one({'board.uuid': str(uid)}, {'_id': False})
+    if board is None:
+        response = {
+            'time': time,
+            'error': 'the post in that uuid does not exist',
+        }
+        return response
+
+    comments = list(board['comments'])
     comments.append(insert_comment)
 
     db.brandSnaps.update_one({'board.uuid': str(uid)}, {'$set': {'comments': comments}})
