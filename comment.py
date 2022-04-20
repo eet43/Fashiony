@@ -3,6 +3,7 @@ import re
 import datetime
 import uuid
 import json
+import app
 
 from pymongo import MongoClient
 
@@ -16,9 +17,12 @@ def comment_enroll(uid):
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')
 
-    data = json.loads(request.data)
+    access_token = request.headers['Access-Token']
+    token_user_info = app.token_user_info(access_token)
 
-    user_name = data['user_name']
+    user_name = token_user_info['properties']['nickname']
+
+    data = json.loads(request.data)
     content = data['content']
 
     if user_name is None or user_name is "":

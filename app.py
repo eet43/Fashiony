@@ -60,6 +60,12 @@ def oauth_userinfo_api():
     return jsonify(result)
 
 
+# access_token 을 이용하여 카카오 서버로 유저 정보 요청
+def token_user_info(access_token):
+    user_info = Oauth().userinfo("Bearer " + access_token)
+    return user_info
+
+
 # 전체 게시물에 대한 정보를 내려주는 API
 @app.route('/api/board', methods=['GET'])
 def board_entire_show():
