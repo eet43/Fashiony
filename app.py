@@ -1,13 +1,16 @@
 from flask import Flask, render_template, jsonify, request, make_response
+from flask_uuid import FlaskUUID
 from config import CLIENT_ID, REDIRECT_URI
 from controller import Oauth
 
 import re
 import datetime
-import json
 import board
+import comment
+import json
 
 app = Flask(__name__)
+FlaskUUID(app)
 
 from pymongo import MongoClient
 
@@ -60,6 +63,13 @@ def oauth_userinfo_api():
 @app.route('/api/board', methods=['GET'])
 def board_entire_show():
     response = board.board_entire_show()
+    return jsonify(response)
+
+
+# 게시물에 대한 상세 정보를 내려주는 API
+@app.route('/api/board/<uuid:uid>', methods=['GET'])
+def board_detail_show(uid):
+    response = board.board_detail_show(uid)
     return jsonify(response)
 
 if __name__ == '__main__':
