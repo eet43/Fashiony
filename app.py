@@ -19,7 +19,7 @@ db = client.fashionydb
 @app.route('/api/board', methods=['GET'])
 def board_entire_show():
     response = board.board_entire_show()
-    return json.dumps(response, default=str)
+    return jsonify(response)
 
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
