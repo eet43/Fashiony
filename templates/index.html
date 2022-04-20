@@ -1,10 +1,28 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+	<meta charset='utf-8'>
+	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+	<title>Test</title>
+	<meta name='viewport' content='width=device-width, initial-scale=1'>
+	<link rel='stylesheet' type='text/css' media='screen' href='/static/style.css'>
 </head>
 <body>
+	<div class="Wrapper">
+		<div class="title">Fashiony</div>
+		<div class="info">당신의 스타일을 뽐내고 싶으면 로그인 하세요.</div>
 
+		<div id="kakao" class="kakao_button">
+			<img src="/static/kakaolink_btn_small.png" alt="kakao oauth" />
+			<span>카카오 로그인</span>
+		</div>
+
+		<div id="nickname" class="nickname display_none"></div>
+
+		<div id="logout" class="logout display_none">
+			<span>로그아웃</span>
+		</div>
+	</div>
 </body>
+<script src='/static/main.js'></script>
 </html>
