@@ -1,16 +1,18 @@
 from flask import Flask, render_template, jsonify, request, make_response
+from flask_uuid import FlaskUUID
 from config import CLIENT_ID, REDIRECT_URI
 from controller import Oauth
 
 import re
 import datetime
-import json
 import board
+import comment
+import json
 
 app = Flask(__name__)
+FlaskUUID(app)
 
 from pymongo import MongoClient
-
 
 # MongoDB 접속
 client = MongoClient('localhost', 27017)
@@ -27,10 +29,10 @@ def index():
 def create_access_token(identity):
     pass
 
-#카카오 서버로 유저 정보 요청
+
+# 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
 def oauth_api():
-
     code = str(request.args.get('code'))
 
     oauth = Oauth()
@@ -40,7 +42,8 @@ def oauth_api():
     resp = make_response(render_template('example.html'))
     return resp
 
-#카카오 서버로 로그인 요청
+
+# 카카오 서버로 로그인 요청
 @app.route('/oauth/url')
 def oauth_url_api():
     return jsonify(
@@ -48,12 +51,19 @@ def oauth_url_api():
                         % (CLIENT_ID, REDIRECT_URI)
     )
 
-#카카오 서버로 유저 정보 요청 url 매핑
+
+# 카카오 서버로 유저 정보 요청 url 매핑
 @app.route("/oauth/userinfo", methods=['POST'])
 def oauth_userinfo_api():
     access_token = request.get_json()['access_token']
     result = Oauth().userinfo("Bearer " + access_token)
     return jsonify(result)
+
+
+# access_token 을 이용하여 카카오 서버로 유저 정보 요청
+def token_user_info(access_token):
+    user_info = Oauth().userinfo("Bearer " + access_token)
+    return user_info
 
 
 # 전체 게시물에 대한 정보를 내려주는 API
@@ -62,6 +72,13 @@ def board_entire_show():
     response = board.board_entire_show()
     return jsonify(response)
 
+
+# 댓글 등록 API
+@app.route('/api/board/<uuid:uid>/comment', methods=['POST'])
+def comment_enroll(uid):
+    response = comment.comment_enroll(uid)
+    return jsonify(response)
+
+
 if __name__ == '__main__':
     app.run('0.0.0.0', port=5000, debug=True)
-
