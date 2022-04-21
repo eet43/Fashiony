@@ -110,10 +110,6 @@ def comment_enroll(uid):
     response = comment.comment_enroll(uid)
     return jsonify(response)
 
-@app.route("/homepage")
-def homepage():
-    return render_template('homepage.html')
-
 
 if __name__ == "__main__":
     app.secret_key = 'super secret key'

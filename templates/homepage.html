@@ -57,6 +57,13 @@
         $(document).ready(function () {
             let params = new URLSearchParams(window.location.search);
             let page = params.get("page");
+
+            if (page !== 1){
+                $('#preButton').removeClass('disabled');
+            } else {
+                $('#preButton').removeClass('disabled');
+            }
+
             boardList(page)
         });
 
@@ -158,7 +165,7 @@
     <div class="button-group">
           <nav aria-label="..." class="pagenation-button">
         <ul class="pagination">
-            <li class="page-item disabled">
+            <li id="preButton" class="page-item disabled">
                 <span class="page-link" onclick="prePage()">Previous</span>
             </li>
             <li class="page-item">
