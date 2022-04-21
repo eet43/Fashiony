@@ -48,9 +48,7 @@ def oauth_api():
 
     user = oauth.userinfo("Bearer " + auth_info['access_token'])
 
-    resp = make_response(render_template('homepage.html'))
-
-    return resp
+    return redirect('http://localhost:5000/homepage?page=1')
 
 
 # 로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
@@ -111,6 +109,10 @@ def board_detail_show(uid):
 def comment_enroll(uid):
     response = comment.comment_enroll(uid)
     return jsonify(response)
+
+@app.route("/homepage")
+def homepage():
+    return render_template('homepage.html')
 
 
 if __name__ == "__main__":
