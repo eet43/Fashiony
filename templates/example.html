@@ -1,15 +1,151 @@
-<!DOCTYPE html>
-<html>
+<!Doctype html>
+<html lang="ko">
+
 <head>
-	<meta charset='utf-8'>
-	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
-	<title>Test</title>
-	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<link rel='stylesheet' type='text/css' media='screen' href='/static/style.css'>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <title>Fashiony</title>
+
+    <!-- style -->
+    <style>
+        .wrap {
+            margin: 3%
+        }
+
+        .search {
+            width: 600px;
+            margin-left: -150px;
+            margin-right: 20px;
+        }
+
+        .home-box {
+            margin-top: 20px;
+        }
+
+        .no-border {
+            border: 0;
+        }
+
+        .pagination {
+            position: absolute;
+            left: 50%;
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            showArticles();
+        });
+
+        function postArticle() {
+            let url = $('#post-url').val();
+            let comment = $('#post-comment').val();
+
+            $.ajax({
+                type: "POST",
+                url: "/memo",
+                data: {
+                    url_give: url,
+                    comment_give: comment
+                },
+                success: function (response) { // 성공하면
+                    alert(response["msg"]);
+                    // 새로고침
+                    window.location.reload();
+                }
+            })
+        }
+
+        function showArticles() {
+            $.ajax({
+                type: "GET",
+                url: "/api/board",
+                data: {},
+                success: function (response) {
+                    let boards = response['data']['boards']
+
+                    for (let i = 0; i < boards.length; i++) {
+                        let imageUrl = boards[i]['board']['imageUrl'];
+                        let brandName = boards[i]['board']['brandName'];
+                        let modelName = boards[i]['board']['modelName']
+                        let createdAt = boards[i]['board']['createdAt']
+                        let comment_num = boards[i]['comments'].length
+
+                        let tmp_html = `
+                                <div class="col mb-10">
+                                        <div class="card">
+                                            <img class="no-border img-thumbnail"
+                                                 src= "${imageUrl}"
+                                                 alt="Card image cap">
+                                            <div class="card-body">
+                                                <a target="_blank" class="card-title">${brandName}</a>
+                                                <p class="card-text">${modelName}</p>
+                                                <p class="card-text comment">댓글 수 : ${comment_num}<br> 작성 시각 : ${createdAt}</p>
+                                            </div>
+                                        </div>
+                                </div>`;
+
+                        $('#cards-box').append(tmp_html);
+                    }
+
+                    for (let i = boards.length; i < 10; i++) {
+                        let tmp_html = `<div class="col mb-10"></div>`
+                        $('#cards-box').append(tmp_html);
+                    }
+                }
+            })
+        }
+    </script>
+
 </head>
+
 <body>
-	<div class="Wrapper">
-        <h1>제목</h1>
-	</div>
+<div class="wrap">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="search">
+                <form class="d-flex">
+                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+    </nav>
+
+    <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
+    </div>
+
+    <div>
+          <nav aria-label="..." class="pagenation-button">
+        <ul class="pagination">
+            <li class="page-item disabled">
+                <span class="page-link">Previous</span>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="#">Next</a>
+            </li>
+        </ul>
+    </nav>
+    </div>
+</div>
 </body>
+
 </html>
