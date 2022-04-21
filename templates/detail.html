@@ -1,0 +1,171 @@
+<!Doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <title>Fashiony</title>
+
+    <!-- style -->
+    <link rel='stylesheet' type='text/css' media='screen' href='/static/detail_style.css'>
+
+    <script>
+        $(document).ready(function () {
+            showDetail();
+            document.querySelector("#new_comment").addEventListener("click", createComment);
+        });
+
+        function createComment() {
+            // $.ajax({
+            //     type: "POST",
+            //     url: "/api/board/_id/",
+            //     data: {
+            //         "comment" :
+            //     },
+            //     success: function (response) {
+            //         console.log(response)
+            //
+            //         //상제 정보들 입력하기
+            //         let imageUrl = response['board']['imageUrl'];
+            //             let brandName = boards[i]['board']['brandName'];
+            //             let modelName = boards[i]['board']['modelName'];
+            //             let createdAt = boards[i]['board']['createdAt'];
+            //             let comment_num = boards[i]['comments'].length
+            //         }
+            //     })
+            }
+
+        function showDetail() {
+            //디테일 게시물 번호 받아야함 _id
+            $.ajax({
+                type: "GET",
+                url: "/api/board/_id/",
+                data: {},
+                success: function (response) {
+                    console.log(response)
+
+                    //상제 정보들 입력하기
+                    let imageUrl = boards[i]['board']['imageUrl'];
+                    let brandName = boards[i]['board']['brandName'];
+                    let modelName = boards[i]['board']['modelName'];
+                    let createdAt = boards[i]['board']['createdAt'];
+                    let comment_num = boards[i]['comments'].length
+
+                    let tmp_html = `
+                        <div class="col-md-6">
+                            <img class="card-img-top mb-5 mb-md-0"
+                               src="${imageUrl}" alt="..."/></div>
+                            <div class="col-md-6">
+                                <h1 class="display-5 fw-bolder">${brandName}</h1>
+                                <div class="fs-5 mb-5">
+                                    <span>${modelName}</span>
+                                </div>
+                                <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>
+                                <div class="d-flex">
+                                    <form name="myform" id="myform" method="post" action="./save">
+                                    <fieldset>
+                                    <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>
+                                    <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>
+                                    <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>
+                                    <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>
+                                    <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>
+                                </fieldset>
+                                </form>
+                            </div>
+                        </div>`;
+
+                    $('#model_card').append(tmp_html);
+
+                    for (let i = boards.length; i < 10; i++) {
+                        let tmp_html = `<div class="col mb-10"></div>`
+                        $('#cards-box').append(tmp_html);
+                    }
+                }
+                }
+            )
+        }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="search">
+                <form class="d-flex">
+                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
+                </form>
+            </div>
+        </div>
+        <div id="logout" class="kakao_button">
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
+            <span>로그아웃</span>
+        </div>
+    </nav>
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center" id="model_card">
+<!--                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"-->
+<!--                                           src="https://pbs.twimg.com/media/E5wP-lzVgAERQLZ.jpg:large" alt="..."/></div>-->
+<!--                <div class="col-md-6">-->
+<!--                    <h1 class="display-5 fw-bolder">Brand</h1>-->
+<!--                    <div class="fs-5 mb-5">-->
+<!--                        <span>name</span>-->
+<!--                    </div>-->
+<!--                    <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>-->
+<!--                    <div class="d-flex">-->
+<!--                        <form name="myform" id="myform" method="post" action="./save">-->
+<!--                            <fieldset>-->
+<!--                                <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>-->
+<!--                                <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>-->
+<!--                                <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>-->
+<!--                                <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>-->
+<!--                                <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>-->
+<!--                            </fieldset>-->
+<!--                        </form>-->
+<!--                    </div>-->
+<!--                </div>-->
+            </div>
+        </div>
+    </section>
+    <section class="mx-5">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div id="comments">
+                    <!-- 댓글들 불러오는 곳-->
+                </div>
+                <form class="mb-4">
+                    <textarea class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
+                </form>
+                <button type="button" id= "new_comment" class="btn btn-dark mt-1">
+                    댓글 달기
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+</div>
+</body>
+<script src='../static/example.js'></script>
+</html>
