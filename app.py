@@ -41,7 +41,7 @@ def oauth_api():
 
     user = oauth.userinfo("Bearer " + auth_info['access_token'])
 
-    resp = make_response(render_template('example.html'))
+    resp = make_response(render_template('homepage.html'))
 
     return resp
 
