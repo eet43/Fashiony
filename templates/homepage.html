@@ -85,6 +85,12 @@
             location.href=`http://localhost:5000/homepage?page=${page}`;
         }
 
+        function prePage(){
+            let params = new URLSearchParams(window.location.search);
+            let page =  parseInt(params.get("page")) -1 ;
+            location.href=`http://localhost:5000/homepage?page=${page}`;
+        }
+
         function boardList(page) {
              $('#cards-box').empty();
             $.ajax({
@@ -153,7 +159,7 @@
           <nav aria-label="..." class="pagenation-button">
         <ul class="pagination">
             <li class="page-item disabled">
-                <span class="page-link">Previous</span>
+                <span class="page-link" onclick="prePage()">Previous</span>
             </li>
             <li class="page-item">
                 <a class="page-link" href="#" onclick="nextPage()">Next</a>
