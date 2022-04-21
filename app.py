@@ -25,6 +25,13 @@ db = client.fashionydb
 def index():
     return render_template('index.html')
 
+
+# 홈 페이지 띄우기
+@app.route("/homepage")
+def homepage():
+    return render_template('homepage.html')
+
+
 # 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
 def oauth_api():
@@ -45,7 +52,8 @@ def oauth_api():
 
     return resp
 
-#로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
+
+# 로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
 @app.route("/oauth/logout")
 def logout():
     kakao_oauth_url = f"https://kauth.kakao.com/oauth/logout?client_id={CLIENT_ID}&logout_redirect_uri={SIGNOUT_REDIRECT_URI}"
@@ -59,6 +67,7 @@ def logout():
     print(value)
 
     return redirect(kakao_oauth_url)
+
 
 # 카카오 서버로 로그인 요청
 @app.route('/oauth/url')
