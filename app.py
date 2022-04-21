@@ -57,8 +57,8 @@ def musinsa_scrapping():
             doc = {
                 'board': {
                     'uuid': str(board_uuid),
-                    'modelName': 'model_name',
-                    'brandName': 'brand_name',
+                    'modelName': model_name,
+                    'brandName': brand_name,
                     'imageUrl': image_url,
                     'createdAt': time,
                     'star': 0.0,
@@ -72,15 +72,39 @@ def musinsa_scrapping():
                 break
 
 
+# 프로젝트 시작 시에 DB 내용을 확인하여 당일에 스크래핑 된 데이터가 있는지 확인하고
+# 만약 당일에 스크래핑 된 데이터가 없다면 musinsa_scrapping() 을 호출하여 스크래핑 진행
+# 만약 당일에 스크래핑 된 데이터가 있다면 아무 동작 하지 않는 함수
+def call_musinsa_scrapping_one_day():
+    last_data = list(db.brandSnaps.find({}, {'_id': False}).sort('board.createdAt', -1).limit(1))
+    last_data_day = last_data[0]['board']['createdAt'].split(' ')[0]
+
+    now = datetime.datetime.now()
+    today = now.strftime('%Y-%m-%d')
+
+    if last_data_day != today:
+        print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑 시작 ---')
+        musinsa_scrapping()
+    else:
+        print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑을 건너뜁니다.')
+
+
 # 로그인 페이지 띄우기
 @app.route("/")
 def index():
     return render_template('index.html')
 
+
 # 홈 페이지 띄우기
 @app.route("/homepage")
 def homepage():
     return render_template('homepage.html')
+
+
+# 상세 페이지 띄우기
+@app.route("/brandSnap/<uuid:uid>")
+def detail(uid):
+    return render_template('detail.html')
 
 
 # 카카오 서버로 유저 정보 요청
@@ -163,6 +187,7 @@ def comment_enroll(uid):
 
 
 if __name__ == "__main__":
+    call_musinsa_scrapping_one_day()
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.run('0.0.0.0', port=5000, debug=True)
