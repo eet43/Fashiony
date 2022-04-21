@@ -88,6 +88,7 @@ def call_musinsa_scrapping_one_day():
     else:
         print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑을 건너뜁니다.')
 
+
 # 로그인 페이지 띄우기
 @app.route("/")
 def index():
@@ -98,6 +99,12 @@ def index():
 @app.route("/homepage")
 def homepage():
     return render_template('homepage.html')
+
+
+# 상세 페이지 띄우기
+@app.route("/brandSnap/<uuid:uid>")
+def detail(uid):
+    return render_template('detail.html')
 
 
 # 카카오 서버로 유저 정보 요청
@@ -180,7 +187,7 @@ def comment_enroll(uid):
 
 
 if __name__ == "__main__":
-    call_musinsa_scrapping_one_day();
+    call_musinsa_scrapping_one_day()
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'
     app.run('0.0.0.0', port=5000, debug=True)
