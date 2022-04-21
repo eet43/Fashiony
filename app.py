@@ -2,12 +2,16 @@ from flask import Flask, render_template, jsonify, request, make_response, sessi
 from flask_uuid import FlaskUUID
 from config import CLIENT_ID, REDIRECT_URI, SIGNOUT_REDIRECT_URI
 from controller import Oauth
+import requests
 
 import re
 import datetime
 import board
 import comment
 import json
+from bs4 import BeautifulSoup
+import uuid
+import datetime
 
 app = Flask(__name__)
 FlaskUUID(app)
@@ -16,14 +20,63 @@ from pymongo import MongoClient
 
 # MongoDB 접속
 client = MongoClient('localhost', 27017)
-# 접속할 db 명 지정 -> dbsparta, 해당 이름의 db 가 없으면 자동 생성
+# 접속할 db 명 지정 -> ddbsparta, 해당 이름의 db 가 없으면 자동 생성
 db = client.fashionydb
+
+
+def musinsa_scrapping():
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36'}
+    data = requests.get('https://www.musinsa.com/mz/brandsnap', headers=headers)
+
+    # soup 에 html 형태가 그대로 들어감
+    soup = BeautifulSoup(data.text, 'html.parser')
+
+    image_trs = soup.select(
+        '#wrapper > div.bottom-column.column.clearfix > div.main-content-wrapper > div.section > div > div > div.list-box.box > ul > li ')
+
+    cnt = 0
+    for tr in image_trs:
+        image_tag = tr.select_one('div.articleImg > a > img')
+        brandName_tag = tr.select_one('div.articleInfo > div.title > a.brand')
+        modelName_tag = tr.select_one('div.articleInfo > div.title > a.name')
+
+        if image_tag is not None:
+            cnt += 1
+            image_url = image_tag['src']
+            brand_name = brandName_tag.text
+            model_name = modelName_tag.text
+
+            print(image_url, brand_name, model_name)
+
+            board_uuid = uuid.uuid4()
+
+            now = datetime.datetime.now()
+            time = now.strftime('%Y-%m-%d %H:%M:%S')
+
+            doc = {
+                'board': {
+                    'uuid': str(board_uuid),
+                    'modelName': 'model_name',
+                    'brandName': 'brand_name',
+                    'imageUrl': image_url,
+                    'createdAt': time,
+                    'star': 0.0,
+                },
+                'comments': [],
+                'starHistory': [],
+            }
+
+            db.brandSnaps.insert_one(doc)
+            if cnt == 10:
+                break
 
 
 # 로그인 페이지 띄우기
 @app.route("/")
 def index():
     return render_template('index.html')
+
 
 # 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
@@ -43,7 +96,8 @@ def oauth_api():
 
     return redirect('http://localhost:5000/homepage?page=1')
 
-#로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
+
+# 로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
 @app.route("/oauth/logout")
 def logout():
     kakao_oauth_url = f"https://kauth.kakao.com/oauth/logout?client_id={CLIENT_ID}&logout_redirect_uri={SIGNOUT_REDIRECT_URI}"
@@ -57,6 +111,7 @@ def logout():
     print(value)
 
     return redirect(kakao_oauth_url)
+
 
 # 카카오 서버로 로그인 요청
 @app.route('/oauth/url')
@@ -100,6 +155,7 @@ def board_detail_show(uid):
 def comment_enroll(uid):
     response = comment.comment_enroll(uid)
     return jsonify(response)
+
 
 @app.route("/homepage")
 def homepage():
