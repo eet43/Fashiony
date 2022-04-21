@@ -64,47 +64,52 @@
         $(document).ready(function () {
             let params = new URLSearchParams(window.location.search);
             let page = params.get("page");
-
-            boardList(page)
+            let searchText = params.get("search");
+            if (searchText == null) {
+                boardList(page, '');
+            } else {
+                $('#search-input').val(searchText)
+                boardList(page, searchText);
+            }
         });
-
-        function postArticle() {
-            let url = $('#post-url').val();
-            let comment = $('#post-comment').val();
-
-            $.ajax({
-                type: "POST",
-                url: "/memo",
-                data: {
-                    url_give: url,
-                    comment_give: comment
-                },
-                success: function (response) { // 성공하면
-                    alert(response["msg"]);
-                    // 새로고침
-                    window.location.reload();
-                }
-            })
-        }
 
         function nextPage() {
             let params = new URLSearchParams(window.location.search);
             let page = parseInt(params.get("page")) + 1;
-            location.href = `http://localhost:5000/homepage?page=${page}`;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
         }
 
         function prePage() {
             let params = new URLSearchParams(window.location.search);
             let page = parseInt(params.get("page")) - 1;
-            location.href = `http://localhost:5000/homepage?page=${page}`;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
         }
 
-        function boardList(page) {
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function boardList(page, searchText) {
             $('#cards-box').empty();
-            let pageSize = 4;
+            let pageSize = 3;
             $.ajax({
                 type: "GET",
-                url: `/api/board?page=${page}&pageSize=${pageSize}`,
+                url: `/api/board?page=${page}&pageSize=${pageSize}&search=${searchText}`,
                 data: {},
                 success: function (response) {
                     let boards = response['data']['boards'];
@@ -136,15 +141,15 @@
 
                     // 페이지 이동 버튼 활성화/비활성화
                     if (page === "1") {
-                        $('#preButton').prop('disabled', true);
+                        $('#pre-button').prop('disabled', true);
                     } else {
-                        $('#preButton').prop('disabled', false);
+                        $('#pre-button').prop('disabled', false);
                     }
 
                     if (parseInt(total) <= parseInt(page) * parseInt(pageSize)) {
-                        $('#nextButton').prop('disabled', true);
+                        $('#next-button').prop('disabled', true);
                     } else {
-                        $('#nextButton').prop('disabled', false);
+                        $('#next-button').prop('disabled', false);
                     }
                 }
             })
@@ -156,17 +161,18 @@
 <div class="wrap">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
+            <a class="navbar-brand mb-0 h1" href="?page=1">Fashiony</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="search">
-                <form class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
-                </form>
+                <div class="d-flex">
+                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light" onclick="search()">Search</button>
+                </div>
             </div>
         </div>
         <div id="logout" class="kakao_button">
@@ -179,8 +185,8 @@
     </div>
 
     <div class="button-group pagination">
-        <button type="button" class="btn btn-light" onclick="prePage()" id="preButton" disabled>Previous</button>
-        <button type="button" class="btn btn-light" onclick="nextPage()" id="nextButton">Next</button>
+        <button type="button" class="btn btn-light" onclick="prePage()" id="pre-button" disabled>Previous</button>
+        <button type="button" class="btn btn-light" onclick="nextPage()" id="next-button">Next</button>
     </div>
 </div>
 </body>

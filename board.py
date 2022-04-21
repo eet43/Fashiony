@@ -22,7 +22,7 @@ def board_entire_show():
     else:
         page_size = 10
 
-    if request.args.get('search') is not None:
+    if request.args.get('search') is not None or request.args.get('search') is '':
         search = ".*" + request.args.get('search') + ".*"
         like_search = re.compile(search, re.IGNORECASE)
         boards = list(
