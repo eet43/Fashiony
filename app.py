@@ -77,6 +77,11 @@ def musinsa_scrapping():
 def index():
     return render_template('index.html')
 
+# 홈 페이지 띄우기
+@app.route("/homepage")
+def homepage():
+    return render_template('homepage.html')
+
 
 # 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
@@ -155,11 +160,6 @@ def board_detail_show(uid):
 def comment_enroll(uid):
     response = comment.comment_enroll(uid)
     return jsonify(response)
-
-
-@app.route("/homepage")
-def homepage():
-    return render_template('homepage.html')
 
 
 if __name__ == "__main__":

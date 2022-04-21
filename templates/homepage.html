@@ -26,7 +26,7 @@
         }
 
         .search {
-            width: 600px;
+            width: 400px;
             margin-left: -130px;
             margin-right: 20px;
         }
@@ -46,51 +46,103 @@
 
         .kakao_button {
             width: 100px;
+            margin-left: -3%;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        .star-rating {
+            width: 100px;
+        }
+
+        .star-rating, .star-rating span {
+            display: inline-block;
+            height: 18px;
+            overflow: hidden;
+            background: url("/static/star.png") no-repeat;
+            background-size: 100px;
+        }
+
+        .star-rating span {
+            background-position: left bottom;
+            line-height: 0;
+            vertical-align: top;
         }
 
     </style>
     <script>
         $(document).ready(function () {
-            showArticles();
+            let params = new URLSearchParams(window.location.search);
+            let page = params.get("page");
+            let searchText = params.get("search");
+            if (searchText == null) {
+                boardList(page, '');
+            } else {
+                $('#search-input').val(searchText)
+                boardList(page, searchText);
+            }
         });
 
-        function postArticle() {
-            let url = $('#post-url').val();
-            let comment = $('#post-comment').val();
-
-            $.ajax({
-                type: "POST",
-                url: "/memo",
-                data: {
-                    url_give: url,
-                    comment_give: comment
-                },
-                success: function (response) { // 성공하면
-                    alert(response["msg"]);
-                    // 새로고침
-                    window.location.reload();
-                }
-            })
+        function nextPage() {
+            let params = new URLSearchParams(window.location.search);
+            let page = parseInt(params.get("page")) + 1;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
         }
 
-        function showArticles() {
+        function prePage() {
+            let params = new URLSearchParams(window.location.search);
+            let page = parseInt(params.get("page")) - 1;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
+        }
+
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function detailBoard(detail_url) {
+            location.href = detail_url;
+        }
+
+        function boardList(page, searchText) {
+            $('#cards-box').empty();
+            let pageSize = 10;
             $.ajax({
                 type: "GET",
-                url: "/api/board",
+                url: `/api/board?page=${page}&pageSize=${pageSize}&search=${searchText}`,
                 data: {},
                 success: function (response) {
-                    let boards = response['data']['boards']
+                    let boards = response['data']['boards'];
+                    let total = response['total'];
 
                     for (let i = 0; i < boards.length; i++) {
                         let imageUrl = boards[i]['board']['imageUrl'];
                         let brandName = boards[i]['board']['brandName'];
-                        let modelName = boards[i]['board']['modelName']
-                        let createdAt = boards[i]['board']['createdAt']
-                        let comment_num = boards[i]['comments'].length
+                        let modelName = boards[i]['board']['modelName'];
+                        let createdAt = boards[i]['board']['createdAt'];
+                        let star = parseFloat(boards[i]['board']['star']) * 20;
+                        let detailUrl = 'http://localhost:5000/brandSnap/' + boards[i]['board']['uuid'];
+                        let comment_num = boards[i]['comments'].length;
 
                         let tmp_html = `
-                                <div class="col mb-10">
-                                        <div class="card">
+                                <div class="col" onclick="detailBoard('${detailUrl}')">
+                                        <div class="card h-100">
                                             <img class="no-border img-thumbnail"
                                                  src= "${imageUrl}"
                                                  alt="Card image cap">
@@ -98,16 +150,42 @@
                                                 <a target="_blank" class="card-title">${brandName}</a>
                                                 <p class="card-text">${modelName}</p>
                                                 <p class="card-text comment">댓글 수 : ${comment_num}<br> 작성 시각 : ${createdAt}</p>
+                                                <div class="wrap-star">
+                                                    <div class="star-rating">
+                                                        <span style="width:${star}%"></span>
+                                                    </di>
+                                                </div>
                                             </div>
                                         </div>
                                 </div>`;
 
-                        $('#cards-box').append(tmp_html);
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
                     }
 
                     for (let i = boards.length; i < 10; i++) {
                         let tmp_html = `<div class="col mb-10"></div>`
-                        $('#cards-box').append(tmp_html);
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
+                    }
+
+                    // 페이지 이동 버튼 활성화/비활성화
+                    if (page === "1") {
+                        $('#pre-button').prop('disabled', true);
+                    } else {
+                        $('#pre-button').prop('disabled', false);
+                    }
+
+                    if (parseInt(total) <= parseInt(page) * parseInt(pageSize)) {
+                        $('#next-button').prop('disabled', true);
+                    } else {
+                        $('#next-button').prop('disabled', false);
                     }
                 }
             })
@@ -119,39 +197,34 @@
 <div class="wrap">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
+            <a class="navbar-brand mb-0 h1" href="?page=1">Fashiony</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="search">
-                <form class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
-                </form>
+                <div class="d-flex">
+                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
+                </div>
             </div>
         </div>
         <div id="logout" class="kakao_button">
-			<img src="/static/kakaolink_btn_small.png" alt="kakao oauth" />
-			<span>로그아웃</span>
-		</div>
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
+            <span>로그아웃</span>
+        </div>
     </nav>
 
-    <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
+    <div id="cards-box-1" class="row home-box">
+    </div>
+    <div id="cards-box-2" class="row home-box">
     </div>
 
-    <div>
-          <nav aria-label="..." class="pagenation-button">
-        <ul class="pagination">
-            <li class="page-item disabled">
-                <span class="page-link">Previous</span>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#">Next</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="button-group pagination">
+        <button type="button" class="btn btn-light" onclick="prePage()" id="pre-button" disabled>Previous</button>
+        <button type="button" class="btn btn-light" onclick="nextPage()" id="next-button">Next</button>
     </div>
 </div>
 </body>
