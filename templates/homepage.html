@@ -116,6 +116,10 @@
             }
         }
 
+        function detailBoard(detail_url) {
+            location.href = detail_url;
+        }
+
         function boardList(page, searchText) {
             $('#cards-box').empty();
             let pageSize = 10;
@@ -133,10 +137,11 @@
                         let modelName = boards[i]['board']['modelName'];
                         let createdAt = boards[i]['board']['createdAt'];
                         let star = parseFloat(boards[i]['board']['star']) * 20;
+                        let detailUrl = 'http://localhost:5000/brandSnap/' + boards[i]['board']['uuid'];
                         let comment_num = boards[i]['comments'].length;
 
                         let tmp_html = `
-                                <div class="col">
+                                <div class="col" onclick="detailBoard('${detailUrl}')">
                                         <div class="card h-100">
                                             <img class="no-border img-thumbnail"
                                                  src= "${imageUrl}"
