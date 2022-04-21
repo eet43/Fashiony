@@ -1,13 +1,16 @@
 from flask import Flask, render_template, jsonify, request, make_response, session, redirect
+from flask_uuid import FlaskUUID
 from config import CLIENT_ID, REDIRECT_URI, SIGNOUT_REDIRECT_URI
 from controller import Oauth
 
 import re
 import datetime
-import json
 import board
+import comment
+import json
 
 app = Flask(__name__)
+FlaskUUID(app)
 
 from pymongo import MongoClient
 
@@ -21,7 +24,6 @@ db = client.fashionydb
 @app.route("/")
 def index():
     return render_template('index.html')
-
 
 # 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
@@ -75,13 +77,33 @@ def oauth_userinfo_api():
     return jsonify(result)
 
 
+# access_token 을 이용하여 카카오 서버로 유저 정보 요청
+def token_user_info(access_token):
+    user_info = Oauth().userinfo("Bearer " + access_token)
+    return user_info
+
+
 # 전체 게시물에 대한 정보를 내려주는 API
 @app.route('/api/board', methods=['GET'])
 def board_entire_show():
     response = board.board_entire_show()
     return jsonify(response)
 
-#앞에 두 코드 세션을 사용하기 위한 설정 값
+
+# 게시물에 대한 상세 정보를 내려주는 API
+@app.route('/api/board/<uuid:uid>', methods=['GET'])
+def board_detail_show(uid):
+    response = board.board_detail_show(uid)
+    return jsonify(response)
+
+
+# 댓글 등록 API
+@app.route('/api/board/<uuid:uid>/comment', methods=['POST'])
+def comment_enroll(uid):
+    response = comment.comment_enroll(uid)
+    return jsonify(response)
+
+
 if __name__ == "__main__":
     app.secret_key = 'super secret key'
     app.config['SESSION_TYPE'] = 'filesystem'

@@ -43,3 +43,22 @@ def board_entire_show():
     }
 
     return response
+
+# 게시물 상세 정보를 내려 주는 API
+def board_detail_show(uid):
+    now = datetime.datetime.now()
+    time = now.strftime('%Y-%m-%d %H:%M:%S')
+
+    board = db.brandSnaps.find_one({'board.uuid': str(uid)}, {'_id': False})
+    if board is None:
+        response = {
+            'time': time,
+            'error': 'the post in that uuid does not exist',
+        }
+        return response
+
+    response = {
+        'time': time,
+        'data': board
+    }
+    return response
