@@ -48,10 +48,16 @@
             width: 100px;
         }
 
+        .button-group {
+            margin-top: 20px;
+        }
+
     </style>
     <script>
         $(document).ready(function () {
-            showArticles();
+            let params = new URLSearchParams(window.location.search);
+            let page = params.get("page");
+            boardList(page)
         });
 
         function postArticle() {
@@ -73,10 +79,17 @@
             })
         }
 
-        function showArticles() {
+        function nextPage(){
+            let params = new URLSearchParams(window.location.search);
+            let page =  parseInt(params.get("page")) + 1;
+            location.href=`http://localhost:5000/homepage?page=${page}`;
+        }
+
+        function boardList(page) {
+             $('#cards-box').empty();
             $.ajax({
                 type: "GET",
-                url: "/api/board",
+                url: `/api/board?page=${page}&pageSize=4`,
                 data: {},
                 success: function (response) {
                     let boards = response['data']['boards']
@@ -102,11 +115,6 @@
                                         </div>
                                 </div>`;
 
-                        $('#cards-box').append(tmp_html);
-                    }
-
-                    for (let i = boards.length; i < 10; i++) {
-                        let tmp_html = `<div class="col mb-10"></div>`
                         $('#cards-box').append(tmp_html);
                     }
                 }
@@ -141,14 +149,14 @@
     <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
     </div>
 
-    <div>
+    <div class="button-group">
           <nav aria-label="..." class="pagenation-button">
         <ul class="pagination">
             <li class="page-item disabled">
                 <span class="page-link">Previous</span>
             </li>
             <li class="page-item">
-                <a class="page-link" href="#">Next</a>
+                <a class="page-link" href="#" onclick="nextPage()">Next</a>
             </li>
         </ul>
     </nav>
