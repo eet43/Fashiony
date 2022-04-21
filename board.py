@@ -34,7 +34,7 @@ def board_entire_show():
                                {'_id': False})))
     else:
         boards = list(db.brandSnaps.find({}, {'_id': False}).skip((page - 1) * page_size).limit(page_size))
-        count = len(boards)
+        count = len(list(db.brandSnaps.find({}, {'_id': False})))
 
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')

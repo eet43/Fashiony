@@ -52,17 +52,18 @@
             margin-top: 20px;
         }
 
+        .disabled {
+            cursor: not-allowed;
+            pointer-events: none;
+        / / Future-proof disabling of clicks . opacity(.65);
+        . box-shadow(none);
+        }
+
     </style>
     <script>
         $(document).ready(function () {
             let params = new URLSearchParams(window.location.search);
             let page = params.get("page");
-
-            if (page !== 1){
-                $('#preButton').removeClass('disabled');
-            } else {
-                $('#preButton').removeClass('disabled');
-            }
 
             boardList(page)
         });
@@ -86,26 +87,28 @@
             })
         }
 
-        function nextPage(){
+        function nextPage() {
             let params = new URLSearchParams(window.location.search);
-            let page =  parseInt(params.get("page")) + 1;
-            location.href=`http://localhost:5000/homepage?page=${page}`;
+            let page = parseInt(params.get("page")) + 1;
+            location.href = `http://localhost:5000/homepage?page=${page}`;
         }
 
-        function prePage(){
+        function prePage() {
             let params = new URLSearchParams(window.location.search);
-            let page =  parseInt(params.get("page")) -1 ;
-            location.href=`http://localhost:5000/homepage?page=${page}`;
+            let page = parseInt(params.get("page")) - 1;
+            location.href = `http://localhost:5000/homepage?page=${page}`;
         }
 
         function boardList(page) {
-             $('#cards-box').empty();
+            $('#cards-box').empty();
+            let pageSize = 4;
             $.ajax({
                 type: "GET",
-                url: `/api/board?page=${page}&pageSize=4`,
+                url: `/api/board?page=${page}&pageSize=${pageSize}`,
                 data: {},
                 success: function (response) {
-                    let boards = response['data']['boards']
+                    let boards = response['data']['boards'];
+                    let total = response['total'];
 
                     for (let i = 0; i < boards.length; i++) {
                         let imageUrl = boards[i]['board']['imageUrl'];
@@ -129,6 +132,19 @@
                                 </div>`;
 
                         $('#cards-box').append(tmp_html);
+                    }
+
+                    // 페이지 이동 버튼 활성화/비활성화
+                    if (page === "1") {
+                        $('#preButton').prop('disabled', true);
+                    } else {
+                        $('#preButton').prop('disabled', false);
+                    }
+
+                    if (parseInt(total) <= parseInt(page) * parseInt(pageSize)) {
+                        $('#nextButton').prop('disabled', true);
+                    } else {
+                        $('#nextButton').prop('disabled', false);
                     }
                 }
             })
@@ -154,25 +170,17 @@
             </div>
         </div>
         <div id="logout" class="kakao_button">
-			<img src="/static/kakaolink_btn_small.png" alt="kakao oauth" />
-			<span>로그아웃</span>
-		</div>
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
+            <span>로그아웃</span>
+        </div>
     </nav>
 
     <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
     </div>
 
-    <div class="button-group">
-          <nav aria-label="..." class="pagenation-button">
-        <ul class="pagination">
-            <li id="preButton" class="page-item disabled">
-                <span class="page-link" onclick="prePage()">Previous</span>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="#" onclick="nextPage()">Next</a>
-            </li>
-        </ul>
-    </nav>
+    <div class="button-group pagination">
+        <button type="button" class="btn btn-light" onclick="prePage()" id="preButton" disabled>Previous</button>
+        <button type="button" class="btn btn-light" onclick="nextPage()" id="nextButton">Next</button>
     </div>
 </div>
 </body>
