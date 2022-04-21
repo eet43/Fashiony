@@ -2,8 +2,8 @@ import requests
 from config import CLIENT_ID, CLIENT_SECRET, REDIRECT_URI
 
 #인증에 필요한 객체 정보, 키 값들 들어가 있음
-class Oauth:
 
+class Oauth:
     def __init__(self):
         self.auth_server = "https://kauth.kakao.com%s"
         self.api_server = "https://kapi.kakao.com%s"

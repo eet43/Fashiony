@@ -27,7 +27,7 @@
 
         .search {
             width: 600px;
-            margin-left: -150px;
+            margin-left: -130px;
             margin-right: 20px;
         }
 
@@ -43,6 +43,11 @@
             position: absolute;
             left: 50%;
         }
+
+        .kakao_button {
+            width: 100px;
+        }
+
     </style>
     <script>
         $(document).ready(function () {
@@ -108,7 +113,6 @@
             })
         }
     </script>
-
 </head>
 
 <body>
@@ -128,6 +132,10 @@
                 </form>
             </div>
         </div>
+        <div id="logout" class="kakao_button">
+			<img src="/static/kakaolink_btn_small.png" alt="kakao oauth" />
+			<span>로그아웃</span>
+		</div>
     </nav>
 
     <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
@@ -147,5 +155,5 @@
     </div>
 </div>
 </body>
-
+<script src='../static/example.js'></script>
 </html>
