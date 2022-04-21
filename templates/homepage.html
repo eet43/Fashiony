@@ -26,7 +26,7 @@
         }
 
         .search {
-            width: 600px;
+            width: 400px;
             margin-left: -130px;
             margin-right: 20px;
         }
@@ -46,17 +46,11 @@
 
         .kakao_button {
             width: 100px;
+            margin-left: -3%;
         }
 
         .button-group {
             margin-top: 20px;
-        }
-
-        .disabled {
-            cursor: not-allowed;
-            pointer-events: none;
-        / / Future-proof disabling of clicks . opacity(.65);
-        . box-shadow(none);
         }
 
     </style>
@@ -184,7 +178,7 @@
                 <div class="d-flex">
                     <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
                            id="search-input">
-                    <button class="btn btn-light" onclick="search()">Search</button>
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
                 </div>
             </div>
         </div>
