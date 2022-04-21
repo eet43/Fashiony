@@ -57,8 +57,8 @@ def musinsa_scrapping():
             doc = {
                 'board': {
                     'uuid': str(board_uuid),
-                    'modelName': 'model_name',
-                    'brandName': 'brand_name',
+                    'modelName': model_name,
+                    'brandName': brand_name,
                     'imageUrl': image_url,
                     'createdAt': time,
                     'star': 0.0,
