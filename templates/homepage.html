@@ -106,7 +106,7 @@
 
         function boardList(page, searchText) {
             $('#cards-box').empty();
-            let pageSize = 3;
+            let pageSize = 10;
             $.ajax({
                 type: "GET",
                 url: `/api/board?page=${page}&pageSize=${pageSize}&search=${searchText}`,
@@ -123,7 +123,7 @@
                         let comment_num = boards[i]['comments'].length
 
                         let tmp_html = `
-                                <div class="col mb-10">
+                                <div class="col">
                                         <div class="card">
                                             <img class="no-border img-thumbnail"
                                                  src= "${imageUrl}"
@@ -136,7 +136,20 @@
                                         </div>
                                 </div>`;
 
-                        $('#cards-box').append(tmp_html);
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
+                    }
+
+                    for (let i = boards.length; i < 10; i++) {
+                        let tmp_html = `<div class="col mb-10"></div>`
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
                     }
 
                     // 페이지 이동 버튼 활성화/비활성화
@@ -181,7 +194,9 @@
         </div>
     </nav>
 
-    <div id="cards-box" class="row row-cols-1 row-cols-md-3 home-box">
+    <div id="cards-box-1" class="row home-box">
+    </div>
+    <div id="cards-box-2" class="row home-box">
     </div>
 
     <div class="button-group pagination">
