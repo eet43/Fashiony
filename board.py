@@ -22,27 +22,33 @@ def board_entire_show():
     else:
         page_size = 10
 
-    if request.args.get('search') is not None:
+    if request.args.get('search') is not None or request.args.get('search') is '':
         search = ".*" + request.args.get('search') + ".*"
         like_search = re.compile(search, re.IGNORECASE)
         boards = list(
             db.brandSnaps.find({"$or": [{'board.modelName': like_search}, {'board.brandName': like_search}]},
                                {'_id': False}).skip(
                 (page - 1) * page_size).limit(page_size))
+        count = len(list(
+            db.brandSnaps.find({"$or": [{'board.modelName': like_search}, {'board.brandName': like_search}]},
+                               {'_id': False})))
     else:
         boards = list(db.brandSnaps.find({}, {'_id': False}).skip((page - 1) * page_size).limit(page_size))
+        count = len(list(db.brandSnaps.find({}, {'_id': False})))
 
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')
 
     response = {
         'time': time,
+        'total': count,
         'data': {
             'boards': boards
         }
     }
 
     return response
+
 
 # 게시물 상세 정보를 내려 주는 API
 def board_detail_show(uid):
