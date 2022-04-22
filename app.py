@@ -76,17 +76,23 @@ def musinsa_scrapping():
 # 만약 당일에 스크래핑 된 데이터가 없다면 musinsa_scrapping() 을 호출하여 스크래핑 진행
 # 만약 당일에 스크래핑 된 데이터가 있다면 아무 동작 하지 않는 함수
 def call_musinsa_scrapping_one_day():
-    last_data = list(db.brandSnaps.find({}, {'_id': False}).sort('board.createdAt', -1).limit(1))
-    last_data_day = last_data[0]['board']['createdAt'].split(' ')[0]
+    count = len(list(db.brandSnaps.find({}, {'_id': False})))
 
-    now = datetime.datetime.now()
-    today = now.strftime('%Y-%m-%d')
+    if count != 0:
+        last_data = list(db.brandSnaps.find({}, {'_id': False}).sort('board.createdAt', -1).limit(1))
+        last_data_day = last_data[0]['board']['createdAt'].split(' ')[0]
 
-    if last_data_day != today:
-        print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑 시작 ---')
-        musinsa_scrapping()
+        now = datetime.datetime.now()
+        today = now.strftime('%Y-%m-%d')
+
+        if last_data_day != today:
+            print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑 시작 ---')
+            musinsa_scrapping()
+        else:
+            print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑을 건너뜁니다.')
     else:
-        print(f'마지막으로 스크래핑 된 날짜는 :{last_data_day} 입니다. 오늘은 {today}입니다. 스크래핑을 건너뜁니다.')
+        print('첫 스크래핑을 진행합니다. ---')
+        musinsa_scrapping()
 
 
 # 로그인 페이지 띄우기
