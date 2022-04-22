@@ -104,7 +104,7 @@ def homepage():
 # 상세 페이지 띄우기
 @app.route("/brandSnap/<uuid:uid>")
 def detail(uid):
-    return render_template('detail.html')
+    return render_template('detail.html', url = uid)
 
 
 # 카카오 서버로 유저 정보 요청

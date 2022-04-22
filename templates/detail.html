@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 <!Doctype html>
 <html lang="ko">
 
@@ -25,45 +24,47 @@
 
     <script>
         $(document).ready(function () {
-            showDetail();
+            let url = window.location.href.substring(32)
+            showDetail(url);
             document.querySelector("#new_comment").addEventListener("click", createComment);
         });
 
         function createComment() {
-            // $.ajax({
-            //     type: "POST",
-            //     url: "/api/board/_id/",
-            //     data: {
-            //         "comment" :
-            //     },
-            //     success: function (response) {
-            //         console.log(response)
-            //
-            //         //상제 정보들 입력하기
-            //         let imageUrl = response['board']['imageUrl'];
-            //             let brandName = boards[i]['board']['brandName'];
-            //             let modelName = boards[i]['board']['modelName'];
-            //             let createdAt = boards[i]['board']['createdAt'];
-            //             let comment_num = boards[i]['comments'].length
-            //         }
-            //     })
+            let url = window.location.href.substring(32)
+            let content = document.getElementById("textInput").value;
+
+            request_body = {
+                "content": content
             }
 
-        function showDetail() {
+            $.ajax({
+                type: "POST",
+                url: `/api/board/${url}/comment`,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(request_body),
+                success: function (response) {
+                    window.location.reload();
+                }
+            })
+        }
+
+        function showDetail(url) {
             //디테일 게시물 번호 받아야함 _id
+
+
             $.ajax({
                 type: "GET",
-                url: "/api/board/_id/",
+                url: `/api/board/${url}`,
                 data: {},
                 success: function (response) {
-                    console.log(response)
+                    board = response['data']['board']
 
                     //상제 정보들 입력하기
-                    let imageUrl = boards[i]['board']['imageUrl'];
-                    let brandName = boards[i]['board']['brandName'];
-                    let modelName = boards[i]['board']['modelName'];
-                    let createdAt = boards[i]['board']['createdAt'];
-                    let comment_num = boards[i]['comments'].length
+                    let imageUrl = board['imageUrl'];
+                    let brandName = board['brandName'];
+                    let modelName = board['modelName'];
+                    let comment_num = response['data']['comments'].length
 
                     let tmp_html = `
                         <div class="col-md-6">
@@ -90,9 +91,24 @@
 
                     $('#model_card').append(tmp_html);
 
-                    for (let i = boards.length; i < 10; i++) {
-                        let tmp_html = `<div class="col mb-10"></div>`
-                        $('#cards-box').append(tmp_html);
+                    let comments = response['data']['comments']
+
+                    console.log(comments)
+
+                    for (let i = 0; i < comment_num; i++) {
+                        let userName = comments[i]['userName'];
+                        let content = comments[i]['content'];
+                        console.log(userName)
+
+                        let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
+                                                        src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
+                        </div>
+                        <div class="ms-3">
+                            <div class="fw-bold">${userName}</div>
+                            ${content}
+                        </div>
+                    </div></div>`
+                        $('#comments').append(tmp_html);
                     }
                 }
                 }
@@ -156,7 +172,7 @@
                     <!-- 댓글들 불러오는 곳-->
                 </div>
                 <form class="mb-4">
-                    <textarea class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
+                    <textarea id="textInput" class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
                 </form>
                 <button type="button" id= "new_comment" class="btn btn-dark mt-1">
                     댓글 달기
