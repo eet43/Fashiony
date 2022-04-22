@@ -1,4 +1,4 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, jsonify, request, session
 import re
 import datetime
 import uuid
@@ -18,10 +18,10 @@ def comment_enroll(uid):
     now = datetime.datetime.now()
     time = now.strftime('%Y-%m-%d %H:%M:%S')
 
-    access_token = request.headers['Access-Token']
-    token_user_info = app.token_user_info(access_token)
+    access_token = session['token'] #세션에서 토큰 값 가져오기
+    token_user_info = app.token_user_info(access_token) #토큰 값으로 유저 정보 받아오기
 
-    user_name = token_user_info['properties']['nickname']
+    user_name = token_user_info['properties']['nickname'] #유저 정보에서 이름 받아오기
 
     data = json.loads(request.data)
     content = data['content']
