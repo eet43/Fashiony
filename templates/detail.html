@@ -20,32 +20,6 @@
     <title>Fashiony</title>
 
     <!-- style -->
-    <style>
-        .search {
-            width: 400px;
-            margin-left: -130px;
-            margin-right: 20px;
-        }
-
-        .home-box {
-            margin-top: 20px;
-        }
-
-        .no-border {
-            border: 0;
-        }
-
-        .pagination {
-            position: absolute;
-            left: 50%;
-        }
-
-        .kakao_button {
-            width: 100px;
-            margin-left: -3%;
-        }
-
-    </style>
     <link rel='stylesheet' type='text/css' media='screen' href='/static/detail_style.css'>
 
     <script>
@@ -158,26 +132,22 @@
 
 <body>
 <div class="wrap">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" onclick="home()">Fashiony</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+    <div class="logo">
+        <img src="/static/logo.png" onclick="home()" class="logo-image">
+        <div id="logout" class="kakao_button">
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth" class="kakao-image"/>
+            <span class="logout-font">Logout</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
             <div class="search">
                 <div class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
                            id="search-input">
                     <button class="btn btn-light search-button" onclick="search()">Search</button>
                 </div>
             </div>
-        </div>
-        <div id="logout" class="kakao_button">
-            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
-            <span>로그아웃</span>
-        </div>
+
     </nav>
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
