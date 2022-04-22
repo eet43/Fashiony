@@ -28,13 +28,13 @@ def board_entire_show():
         like_search = re.compile(search, re.IGNORECASE)
         boards = list(
             db.brandSnaps.find({"$or": [{'board.modelName': like_search}, {'board.brandName': like_search}]},
-                               {'_id': False}).skip(
+                               {'_id': False}).sort('board.createdAt', -1).skip(
                 (page - 1) * page_size).limit(page_size))
         count = len(list(
             db.brandSnaps.find({"$or": [{'board.modelName': like_search}, {'board.brandName': like_search}]},
                                {'_id': False})))
     else:
-        boards = list(db.brandSnaps.find({}, {'_id': False}).skip((page - 1) * page_size).limit(page_size))
+        boards = list(db.brandSnaps.find({}, {'_id': False}).sort('board.createdAt', -1).skip((page - 1) * page_size).limit(page_size))
         count = len(list(db.brandSnaps.find({}, {'_id': False})))
 
     now = datetime.datetime.now()
