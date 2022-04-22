@@ -29,6 +29,28 @@
             document.querySelector("#new_comment").addEventListener("click", createComment);
         });
 
+        function createStar(f) {
+            let url = window.location.href.substring(32)
+            let radio = $('input[name=rating]:checked').val();
+            let star = parseFloat(radio)
+            console.log(radio)
+
+            request_body = {
+                "star": star
+            }
+
+            $.ajax({
+                type: "POST",
+                url: `/api/board/${url}/star`,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(request_body),
+                success: function (response) {
+                    console.log(response)
+                }
+            })
+        }
+
         function createComment() {
             let url = window.location.href.substring(32)
             let content = document.getElementById("textInput").value;
@@ -77,15 +99,15 @@
                                 </div>
                                 <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>
                                 <div class="d-flex">
-                                    <form name="myform" id="myform" method="post" action="./save">
-                                    <fieldset>
-                                    <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>
-                                    <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>
-                                    <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>
-                                    <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>
-                                    <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>
-                                </fieldset>
-                                </form>
+                                    <form name="myform" id="myform">
+                                        <fieldset id="star">
+                                            <input type="radio" name="rating" value="5" id="rate1" onclick="createStar(this.form)"><label for="rate1">⭐</label>
+                                            <input type="radio" name="rating" value="4" id="rate2" onclick="createStar(this.form)"><label for="rate2">⭐</label>
+                                            <input type="radio" name="rating" value="3" id="rate3" onclick="createStar(this.form)"><label for="rate3">⭐</label>
+                                            <input type="radio" name="rating" value="2" id="rate4" onclick="createStar(this.form)"><label for="rate4">⭐</label>
+                                            <input type="radio" name="rating" value="1" id="rate5" onclick="createStar(this.form)"><label for="rate5">⭐</label>
+                                        </fieldset>
+                                    </form>
                             </div>
                         </div>`;
 
@@ -152,26 +174,6 @@
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center" id="model_card">
-                <!--                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"-->
-                <!--                                           src="https://pbs.twimg.com/media/E5wP-lzVgAERQLZ.jpg:large" alt="..."/></div>-->
-                <!--                <div class="col-md-6">-->
-                <!--                    <h1 class="display-5 fw-bolder">Brand</h1>-->
-                <!--                    <div class="fs-5 mb-5">-->
-                <!--                        <span>name</span>-->
-                <!--                    </div>-->
-                <!--                    <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>-->
-                <!--                    <div class="d-flex">-->
-                <!--                        <form name="myform" id="myform" method="post" action="./save">-->
-                <!--                            <fieldset>-->
-                <!--                                <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>-->
-                <!--                                <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>-->
-                <!--                                <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>-->
-                <!--                                <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>-->
-                <!--                                <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>-->
-                <!--                            </fieldset>-->
-                <!--                        </form>-->
-                <!--                    </div>-->
-                <!--                </div>-->
             </div>
         </div>
     </section>
