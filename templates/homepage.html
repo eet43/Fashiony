@@ -27,8 +27,8 @@
 
         .search {
             width: 400px;
-            margin-left: -130px;
             margin-right: 20px;
+            margin-left: 70%;
         }
 
         .home-box {
@@ -41,12 +41,14 @@
 
         .pagination {
             position: absolute;
-            left: 50%;
+            left: 43%;
+            height: 70px;
         }
 
         .kakao_button {
             width: 100px;
             margin-left: -3%;
+            float: right;
         }
 
         .button-group {
@@ -69,6 +71,40 @@
             background-position: left bottom;
             line-height: 0;
             vertical-align: top;
+        }
+
+        .bg-gray {
+            background-color: #C9C9CD;
+        }
+
+        .logout-font {
+            font-size: 14px;
+        }
+
+        .kakao-image {
+            width: 30px;
+        }
+
+        .logo{
+            margin-top: -2%;
+            margin-bottom: 10px;
+        }
+
+        .search-button {
+            margin-left: 5px;
+        }
+
+        .logo-image {
+            width: 200px;
+        }
+
+        .comment{
+            font-size: 13px;
+            color: darkgray;
+        }
+
+        .btn-white {
+            background-color: white;
         }
 
     </style>
@@ -190,30 +226,31 @@
                 }
             })
         }
+
+        function home() {
+            location.href = `http://localhost:5000/homepage?page=1`;
+        }
     </script>
 </head>
 
 <body>
 <div class="wrap">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="logo">
+        <img src="static/logo.png" onclick="home()" class="logo-image">
+        <div id="logout" class="kakao_button">
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth" class="kakao-image"/>
+            <span class="logout-font">Logout</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
         <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="?page=1">Fashiony</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
             <div class="search">
                 <div class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
                            id="search-input">
                     <button class="btn btn-light search-button" onclick="search()">Search</button>
                 </div>
             </div>
-        </div>
-        <div id="logout" class="kakao_button">
-            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
-            <span>로그아웃</span>
         </div>
     </nav>
 
@@ -223,8 +260,8 @@
     </div>
 
     <div class="button-group pagination">
-        <button type="button" class="btn btn-light" onclick="prePage()" id="pre-button" disabled>Previous</button>
-        <button type="button" class="btn btn-light" onclick="nextPage()" id="next-button">Next</button>
+        <button type="button" class="btn btn-white" onclick="prePage()" id="pre-button" disabled>< Previous</button>
+        <button type="button" class="btn btn-white" onclick="nextPage()" id="next-button">Next ></button>
     </div>
 </div>
 </body>
