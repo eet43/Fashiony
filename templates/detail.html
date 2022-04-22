@@ -20,6 +20,32 @@
     <title>Fashiony</title>
 
     <!-- style -->
+    <style>
+        .search {
+            width: 400px;
+            margin-left: -130px;
+            margin-right: 20px;
+        }
+
+        .home-box {
+            margin-top: 20px;
+        }
+
+        .no-border {
+            border: 0;
+        }
+
+        .pagination {
+            position: absolute;
+            left: 50%;
+        }
+
+        .kakao_button {
+            width: 100px;
+            margin-left: -3%;
+        }
+
+    </style>
     <link rel='stylesheet' type='text/css' media='screen' href='/static/detail_style.css'>
 
     <script>
@@ -54,19 +80,19 @@
 
 
             $.ajax({
-                type: "GET",
-                url: `/api/board/${url}`,
-                data: {},
-                success: function (response) {
-                    board = response['data']['board']
+                    type: "GET",
+                    url: `/api/board/${url}`,
+                    data: {},
+                    success: function (response) {
+                        board = response['data']['board']
 
-                    //상제 정보들 입력하기
-                    let imageUrl = board['imageUrl'];
-                    let brandName = board['brandName'];
-                    let modelName = board['modelName'];
-                    let comment_num = response['data']['comments'].length
+                        //상제 정보들 입력하기
+                        let imageUrl = board['imageUrl'];
+                        let brandName = board['brandName'];
+                        let modelName = board['modelName'];
+                        let comment_num = response['data']['comments'].length
 
-                    let tmp_html = `
+                        let tmp_html = `
                         <div class="col-md-6">
                             <img class="card-img-top mb-5 mb-md-0"
                                src="${imageUrl}" alt="..."/></div>
@@ -89,18 +115,18 @@
                             </div>
                         </div>`;
 
-                    $('#model_card').append(tmp_html);
+                        $('#model_card').append(tmp_html);
 
-                    let comments = response['data']['comments']
+                        let comments = response['data']['comments']
 
-                    console.log(comments)
+                        console.log(comments)
 
-                    for (let i = 0; i < comment_num; i++) {
-                        let userName = comments[i]['userName'];
-                        let content = comments[i]['content'];
-                        console.log(userName)
+                        for (let i = 0; i < comment_num; i++) {
+                            let userName = comments[i]['userName'];
+                            let content = comments[i]['content'];
+                            console.log(userName)
 
-                        let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
+                            let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
                                                         src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
                         </div>
                         <div class="ms-3">
@@ -108,11 +134,24 @@
                             ${content}
                         </div>
                     </div></div>`
-                        $('#comments').append(tmp_html);
+                            $('#comments').append(tmp_html);
+                        }
                     }
                 }
-                }
             )
+        }
+
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function home() {
+            location.href = `http://localhost:5000/homepage?page=1`;
         }
     </script>
 </head>
@@ -121,17 +160,18 @@
 <div class="wrap">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
+            <a class="navbar-brand mb-0 h1" onclick="home()">Fashiony</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="search">
-                <form class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
-                </form>
+                <div class="d-flex">
+                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
+                </div>
             </div>
         </div>
         <div id="logout" class="kakao_button">
@@ -142,26 +182,26 @@
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
             <div class="row gx-4 gx-lg-5 align-items-center" id="model_card">
-<!--                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"-->
-<!--                                           src="https://pbs.twimg.com/media/E5wP-lzVgAERQLZ.jpg:large" alt="..."/></div>-->
-<!--                <div class="col-md-6">-->
-<!--                    <h1 class="display-5 fw-bolder">Brand</h1>-->
-<!--                    <div class="fs-5 mb-5">-->
-<!--                        <span>name</span>-->
-<!--                    </div>-->
-<!--                    <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>-->
-<!--                    <div class="d-flex">-->
-<!--                        <form name="myform" id="myform" method="post" action="./save">-->
-<!--                            <fieldset>-->
-<!--                                <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>-->
-<!--                                <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>-->
-<!--                                <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>-->
-<!--                                <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>-->
-<!--                                <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>-->
-<!--                            </fieldset>-->
-<!--                        </form>-->
-<!--                    </div>-->
-<!--                </div>-->
+                <!--                <div class="col-md-6"><img class="card-img-top mb-5 mb-md-0"-->
+                <!--                                           src="https://pbs.twimg.com/media/E5wP-lzVgAERQLZ.jpg:large" alt="..."/></div>-->
+                <!--                <div class="col-md-6">-->
+                <!--                    <h1 class="display-5 fw-bolder">Brand</h1>-->
+                <!--                    <div class="fs-5 mb-5">-->
+                <!--                        <span>name</span>-->
+                <!--                    </div>-->
+                <!--                    <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>-->
+                <!--                    <div class="d-flex">-->
+                <!--                        <form name="myform" id="myform" method="post" action="./save">-->
+                <!--                            <fieldset>-->
+                <!--                                <input type="radio" name="rating" value="5" id="rate1"><label for="rate1">⭐</label>-->
+                <!--                                <input type="radio" name="rating" value="4" id="rate2"><label for="rate2">⭐</label>-->
+                <!--                                <input type="radio" name="rating" value="3" id="rate3"><label for="rate3">⭐</label>-->
+                <!--                                <input type="radio" name="rating" value="2" id="rate4"><label for="rate4">⭐</label>-->
+                <!--                                <input type="radio" name="rating" value="1" id="rate5"><label for="rate5">⭐</label>-->
+                <!--                            </fieldset>-->
+                <!--                        </form>-->
+                <!--                    </div>-->
+                <!--                </div>-->
             </div>
         </div>
     </section>
@@ -174,7 +214,7 @@
                 <form class="mb-4">
                     <textarea id="textInput" class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
                 </form>
-                <button type="button" id= "new_comment" class="btn btn-dark mt-1">
+                <button type="button" id="new_comment" class="btn btn-dark mt-1">
                     댓글 달기
                 </button>
             </div>
