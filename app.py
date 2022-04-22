@@ -185,6 +185,12 @@ def comment_enroll(uid):
     response = comment.comment_enroll(uid)
     return jsonify(response)
 
+# 별점 등록 API
+@app.route('/api/board/<uuid:uid>/star', methods=['POST'])
+def board_star_enroll(uid):
+    response = board.star_enroll(uid)
+    return jsonify(response)
+
 
 if __name__ == "__main__":
     call_musinsa_scrapping_one_day()
