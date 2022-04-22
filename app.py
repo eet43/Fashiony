@@ -110,34 +110,26 @@ def detail(uid):
 # 카카오 서버로 유저 정보 요청
 @app.route("/oauth")
 def oauth_api():
-    code = str(request.args.get('code'))
+    code = str(request.args.get('code')) # 응답 신호 획득
+    oauth = Oauth() # 토큰들을 담는 객체 생성
+    auth_info = oauth.auth(code)  # 토큰들 획득 및 저장
 
-    oauth = Oauth()
-    auth_info = oauth.auth(code)  # 토큰들 획득
-    tokens = json.dumps({'accessToken': auth_info['access_token'], 'refreshToken': auth_info['refresh_token']})
+    session['token'] = auth_info['access_token'] # 로그아웃에 사용될 세션 값
 
-    session['token'] = auth_info['access_token']
-
-    # 토큰정보들
-    print(auth_info)
-
-    user = oauth.userinfo("Bearer " + auth_info['access_token'])
-
-    return redirect('http://localhost:5000/homepage?page=1')
-
+    return redirect('http://localhost:5000/homepage?page=1') # 서비스 홈페이지로 redirect
 
 # 로그아웃 호출입. 세션 값 있으면 지우고 로그인 페이지로 렌더링
 @app.route("/oauth/logout")
 def logout():
-    kakao_oauth_url = f"https://kauth.kakao.com/oauth/logout?client_id={CLIENT_ID}&logout_redirect_uri={SIGNOUT_REDIRECT_URI}"
-
+    #카카오 로그아웃 요청 url
+    kakao_oauth_url = f"https://kauth.kakao.com/oauth/logout?client_id=" \
+                      f"{CLIENT_ID}&logout_redirect_uri={SIGNOUT_REDIRECT_URI}"
+    # 로그아웃 검사 로직
     if session.get('token'):
         session.clear()
         value = {"status": 200, "result": "success"}
     else:
         value = {"status": 404, "result": "fail"}
-
-    print(value)
 
     return redirect(kakao_oauth_url)
 
