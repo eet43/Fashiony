@@ -76,19 +76,19 @@
 
 
             $.ajax({
-                type: "GET",
-                url: `/api/board/${url}`,
-                data: {},
-                success: function (response) {
-                    board = response['data']['board']
+                    type: "GET",
+                    url: `/api/board/${url}`,
+                    data: {},
+                    success: function (response) {
+                        board = response['data']['board']
 
-                    //상제 정보들 입력하기
-                    let imageUrl = board['imageUrl'];
-                    let brandName = board['brandName'];
-                    let modelName = board['modelName'];
-                    let comment_num = response['data']['comments'].length
+                        //상제 정보들 입력하기
+                        let imageUrl = board['imageUrl'];
+                        let brandName = board['brandName'];
+                        let modelName = board['modelName'];
+                        let comment_num = response['data']['comments'].length
 
-                    let tmp_html = `
+                        let tmp_html = `
                         <div class="col-md-6">
                             <img class="card-img-top mb-5 mb-md-0"
                                src="${imageUrl}" alt="..."/></div>
@@ -111,18 +111,18 @@
                             </div>
                         </div>`;
 
-                    $('#model_card').append(tmp_html);
+                        $('#model_card').append(tmp_html);
 
-                    let comments = response['data']['comments']
+                        let comments = response['data']['comments']
 
-                    console.log(comments)
+                        console.log(comments)
 
-                    for (let i = 0; i < comment_num; i++) {
-                        let userName = comments[i]['userName'];
-                        let content = comments[i]['content'];
-                        console.log(userName)
+                        for (let i = 0; i < comment_num; i++) {
+                            let userName = comments[i]['userName'];
+                            let content = comments[i]['content'];
+                            console.log(userName)
 
-                        let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
+                            let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
                                                         src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
                         </div>
                         <div class="ms-3">
@@ -130,36 +130,46 @@
                             ${content}
                         </div>
                     </div></div>`
-                        $('#comments').append(tmp_html);
+                            $('#comments').append(tmp_html);
+                        }
                     }
                 }
-                }
             )
+        }
+
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function home() {
+            location.href = `http://localhost:5000/homepage?page=1`;
         }
     </script>
 </head>
 
 <body>
 <div class="wrap">
-    <nav class="navbar navbar-expand-lg navbar-light bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand mb-0 h1" href="#">Fashiony</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="search">
-                <form class="d-flex">
-                    <input class="form-control search" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-light" onclick="search()" type="submit">Search</button>
-                </form>
-            </div>
-        </div>
+    <div class="logo">
+        <img src="/static/logo.png" onclick="home()" class="logo-image">
         <div id="logout" class="kakao_button">
-            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth"/>
-            <span>로그아웃</span>
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth" class="kakao-image"/>
+            <span class="logout-font">Logout</span>
         </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
+            <div class="search">
+                <div class="d-flex">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
+                </div>
+            </div>
+
     </nav>
     <section class="py-5">
         <div class="container px-4 px-lg-5 my-5">
@@ -176,7 +186,7 @@
                 <form class="mb-4">
                     <textarea id="textInput" class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
                 </form>
-                <button type="button" id= "new_comment" class="btn btn-dark mt-1">
+                <button type="button" id="new_comment" class="btn btn-dark mt-1">
                     댓글 달기
                 </button>
             </div>

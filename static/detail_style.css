@@ -123,14 +123,45 @@ body {
             margin: 3%;
         }
 
-        .search {
-            width: 600px;
-            margin-left: -130px;
+        .wrap {
+            margin: 3%
+        }
+
+           .search {
+            width: 400px;
             margin-right: 20px;
+            margin-left: 70%;
         }
 
         .kakao_button {
             width: 100px;
+            margin-left: -3%;
+            float: right;
+        }
+
+        .bg-gray {
+            background-color: #C9C9CD;
+        }
+
+        .logout-font {
+            font-size: 14px;
+        }
+
+        .kakao-image {
+            width: 30px;
+        }
+
+        .logo {
+            margin-top: -2%;
+            margin-bottom: 10px;
+        }
+
+        .search-button {
+            margin-left: 5px;
+        }
+
+        .logo-image {
+            width: 200px;
         }
 
 hr {
