@@ -1,0 +1,268 @@
+<!Doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <title>Fashiony</title>
+
+    <!-- style -->
+    <style>
+        .wrap {
+            margin: 3%
+        }
+
+        .search {
+            width: 400px;
+            margin-right: 20px;
+            margin-left: 70%;
+        }
+
+        .home-box {
+            margin-top: 20px;
+        }
+
+        .no-border {
+            border: 0;
+        }
+
+        .pagination {
+            position: absolute;
+            left: 43%;
+            height: 70px;
+        }
+
+        .kakao_button {
+            width: 100px;
+            margin-left: -3%;
+            float: right;
+        }
+
+        .button-group {
+            margin-top: 20px;
+        }
+
+        .star-rating {
+            width: 100px;
+        }
+
+        .star-rating, .star-rating span {
+            display: inline-block;
+            height: 18px;
+            overflow: hidden;
+            background: url("/static/star.png") no-repeat;
+            background-size: 100px;
+        }
+
+        .star-rating span {
+            background-position: left bottom;
+            line-height: 0;
+            vertical-align: top;
+        }
+
+        .bg-gray {
+            background-color: #C9C9CD;
+        }
+
+        .logout-font {
+            font-size: 14px;
+        }
+
+        .kakao-image {
+            width: 30px;
+        }
+
+        .logo{
+            margin-top: -2%;
+            margin-bottom: 10px;
+        }
+
+        .search-button {
+            margin-left: 5px;
+        }
+
+        .logo-image {
+            width: 200px;
+        }
+
+        .comment{
+            font-size: 13px;
+            color: darkgray;
+        }
+
+        .btn-white {
+            background-color: white;
+        }
+
+    </style>
+    <script>
+        $(document).ready(function () {
+            let params = new URLSearchParams(window.location.search);
+            let page = params.get("page");
+            let searchText = params.get("search");
+            if (searchText == null) {
+                boardList(page, '');
+            } else {
+                $('#search-input').val(searchText)
+                boardList(page, searchText);
+            }
+        });
+
+        function nextPage() {
+            let params = new URLSearchParams(window.location.search);
+            let page = parseInt(params.get("page")) + 1;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
+        }
+
+        function prePage() {
+            let params = new URLSearchParams(window.location.search);
+            let page = parseInt(params.get("page")) - 1;
+            let searchText = params.get("search");
+            if (searchText == null) {
+                location.href = `http://localhost:5000/homepage?page=${page}`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=${page}&search=${searchText}`;
+            }
+        }
+
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function detailBoard(detail_url) {
+            location.href = detail_url;
+        }
+
+        function boardList(page, searchText) {
+            $('#cards-box').empty();
+            let pageSize = 10;
+            $.ajax({
+                type: "GET",
+                url: `/api/board?page=${page}&pageSize=${pageSize}&search=${searchText}`,
+                data: {},
+                success: function (response) {
+                    let boards = response['data']['boards'];
+                    let total = response['total'];
+
+                    for (let i = 0; i < boards.length; i++) {
+                        let imageUrl = boards[i]['board']['imageUrl'];
+                        let brandName = boards[i]['board']['brandName'];
+                        let modelName = boards[i]['board']['modelName'];
+                        let createdAt = boards[i]['board']['createdAt'];
+                        let star = parseFloat(boards[i]['board']['star']) * 20;
+                        let detailUrl = 'http://localhost:5000/brandSnap/' + boards[i]['board']['uuid'];
+                        let comment_num = boards[i]['comments'].length;
+
+                        let tmp_html = `
+                                <div class="col" onclick="detailBoard('${detailUrl}')">
+                                        <div class="card h-100">
+                                            <img class="no-border img-thumbnail"
+                                                 src= "${imageUrl}"
+                                                 alt="Card image cap">
+                                            <div class="card-body">
+                                                <a target="_blank" class="card-title">${brandName}</a>
+                                                <p class="card-text">${modelName}</p>
+                                                <p class="card-text comment">댓글 수 : ${comment_num}<br> 작성 시각 : ${createdAt}</p>
+                                                <div class="wrap-star">
+                                                    <div class="star-rating">
+                                                        <span style="width:${star}%"></span>
+                                                    </di>
+                                                </div>
+                                            </div>
+                                        </div>
+                                </div>`;
+
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
+                    }
+
+                    for (let i = boards.length; i < 10; i++) {
+                        let tmp_html = `<div class="col mb-10"></div>`
+                        if (i < 5) {
+                            $('#cards-box-1').append(tmp_html);
+                        } else {
+                            $('#cards-box-2').append(tmp_html);
+                        }
+                    }
+
+                    // 페이지 이동 버튼 활성화/비활성화
+                    if (page === "1") {
+                        $('#pre-button').prop('disabled', true);
+                    } else {
+                        $('#pre-button').prop('disabled', false);
+                    }
+
+                    if (parseInt(total) <= parseInt(page) * parseInt(pageSize)) {
+                        $('#next-button').prop('disabled', true);
+                    } else {
+                        $('#next-button').prop('disabled', false);
+                    }
+                }
+            })
+        }
+
+        function home() {
+            location.href = `http://localhost:5000/homepage?page=1`;
+        }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <div class="logo">
+        <img src="/static/logo.png" onclick="home()" class="logo-image">
+        <div id="logout" class="kakao_button">
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth" class="kakao-image"/>
+            <span class="logout-font">Logout</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
+        <div class="container-fluid">
+            <div class="search">
+                <div class="d-flex">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+    <div id="cards-box-1" class="row home-box">
+    </div>
+    <div id="cards-box-2" class="row home-box">
+    </div>
+
+    <div class="button-group pagination">
+        <button type="button" class="btn btn-white" onclick="prePage()" id="pre-button" disabled>< Previous</button>
+        <button type="button" class="btn btn-white" onclick="nextPage()" id="next-button">Next ></button>
+    </div>
+</div>
+</body>
+<script src='../static/example.js'></script>
+</html>

@@ -1,0 +1,200 @@
+<!Doctype html>
+<html lang="ko">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+          crossorigin="anonymous">
+
+    <!-- JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+
+    <title>Fashiony</title>
+
+    <!-- style -->
+    <link rel='stylesheet' type='text/css' media='screen' href='/static/detail_style.css'>
+
+    <script>
+        $(document).ready(function () {
+            let url = window.location.href.substring(32)
+            showDetail(url);
+            document.querySelector("#new_comment").addEventListener("click", createComment);
+        });
+
+        function createStar(f) {
+            let url = window.location.href.substring(32)
+            let radio = $('input[name=rating]:checked').val();
+            let star = parseFloat(radio)
+            console.log(radio)
+
+            request_body = {
+                "star": star
+            }
+
+            $.ajax({
+                type: "POST",
+                url: `/api/board/${url}/star`,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(request_body),
+                success: function (response) {
+                    console.log(response)
+                }
+            })
+        }
+
+        function createComment() {
+            let url = window.location.href.substring(32)
+            let content = document.getElementById("textInput").value;
+
+            request_body = {
+                "content": content
+            }
+
+            $.ajax({
+                type: "POST",
+                url: `/api/board/${url}/comment`,
+                dataType: 'json',
+                contentType: 'application/json; charset=utf-8',
+                data: JSON.stringify(request_body),
+                success: function (response) {
+                    window.location.reload();
+                }
+            })
+        }
+
+        function showDetail(url) {
+            //디테일 게시물 번호 받아야함 _id
+
+
+            $.ajax({
+                    type: "GET",
+                    url: `/api/board/${url}`,
+                    data: {},
+                    success: function (response) {
+                        board = response['data']['board']
+
+                        //상제 정보들 입력하기
+                        let imageUrl = board['imageUrl'];
+                        let brandName = board['brandName'];
+                        let modelName = board['modelName'];
+                        let comment_num = response['data']['comments'].length
+
+                        let tmp_html = `
+                        <div class="col-md-6">
+                            <img class="card-img-top mb-5 mb-md-0"
+                               src="${imageUrl}" alt="..."/></div>
+                            <div class="col-md-6">
+                                <h1 class="display-5 fw-bolder">${brandName}</h1>
+                                <div class="fs-5 mb-5">
+                                    <span>${modelName}</span>
+                                </div>
+                                <p class="lead">나중에 어떻게 코디 했다, 게시판 형식으로 올릴 수 있으면 넣는 공간</p>
+                                <div class="d-flex">
+                                    <form name="myform" id="myform">
+                                        <fieldset id="star">
+                                            <input type="radio" name="rating" value="5" id="rate1" onclick="createStar(this.form)"><label for="rate1">⭐</label>
+                                            <input type="radio" name="rating" value="4" id="rate2" onclick="createStar(this.form)"><label for="rate2">⭐</label>
+                                            <input type="radio" name="rating" value="3" id="rate3" onclick="createStar(this.form)"><label for="rate3">⭐</label>
+                                            <input type="radio" name="rating" value="2" id="rate4" onclick="createStar(this.form)"><label for="rate4">⭐</label>
+                                            <input type="radio" name="rating" value="1" id="rate5" onclick="createStar(this.form)"><label for="rate5">⭐</label>
+                                        </fieldset>
+                                    </form>
+                            </div>
+                        </div>`;
+
+                        $('#model_card').append(tmp_html);
+
+                        let comments = response['data']['comments']
+
+                        console.log(comments)
+
+                        for (let i = 0; i < comment_num; i++) {
+                            let userName = comments[i]['userName'];
+                            let content = comments[i]['content'];
+                            console.log(userName)
+
+                            let tmp_html = `<div class = "d-flex mb-3"><div class="flex-shrink-0"><img class="rounded-circle"
+                                                        src="https://dummyimage.com/50x50/ced4da/6c757d.jpg" alt="..."/>
+                        </div>
+                        <div class="ms-3">
+                            <div class="fw-bold">${userName}</div>
+                            ${content}
+                        </div>
+                    </div></div>`
+                            $('#comments').append(tmp_html);
+                        }
+                    }
+                }
+            )
+        }
+
+        function search() {
+            let searchText = $('#search-input').val();
+            if (searchText === '') {
+                location.href = `http://localhost:5000/homepage?page=1`;
+            } else {
+                location.href = `http://localhost:5000/homepage?page=1&search=${searchText}`;
+            }
+        }
+
+        function home() {
+            location.href = `http://localhost:5000/homepage?page=1`;
+        }
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <div class="logo">
+        <img src="/static/logo.png" onclick="home()" class="logo-image">
+        <div id="logout" class="kakao_button">
+            <img src="/static/kakaolink_btn_small.png" alt="kakao oauth" class="kakao-image"/>
+            <span class="logout-font">Logout</span>
+        </div>
+    </div>
+    <nav class="navbar navbar-expand-lg navbar-light bg-gray">
+            <div class="search">
+                <div class="d-flex">
+                    <input class="form-control" type="search" placeholder="Search" aria-label="Search"
+                           id="search-input">
+                    <button class="btn btn-light search-button" onclick="search()">Search</button>
+                </div>
+            </div>
+
+    </nav>
+    <section class="py-5">
+        <div class="container px-4 px-lg-5 my-5">
+            <div class="row gx-4 gx-lg-5 align-items-center" id="model_card">
+            </div>
+        </div>
+    </section>
+    <section class="mx-5">
+        <div class="card bg-light">
+            <div class="card-body">
+                <div id="comments">
+                    <!-- 댓글들 불러오는 곳-->
+                </div>
+                <form class="mb-4">
+                    <textarea id="textInput" class="form-control" rows="3" placeholder="당신의 생각을 표현하세요 !"></textarea>
+                </form>
+                <button type="button" id="new_comment" class="btn btn-dark mt-1">
+                    댓글 달기
+                </button>
+            </div>
+        </div>
+    </section>
+
+
+</div>
+</body>
+<script src='../static/example.js'></script>
+</html>
